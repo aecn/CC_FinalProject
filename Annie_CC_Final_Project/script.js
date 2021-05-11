@@ -9,6 +9,7 @@ let daymuseum;
 let nightmuseum;
 // stars
 var stars = []; // array storing stars
+let nightsound;
 // paintings
 // pearl
 let pearl;
@@ -24,7 +25,7 @@ let memory;
 var warpmemory; // animation
 // the scream
 let scream;
-let nightscream;
+var nightscream;
 // painting frames
 let vertical;
 let horizontal;
@@ -32,9 +33,10 @@ let nightvertical;
 let nighthorizontal;
 // terracotta
 let terracotta;
+var nightc;
 // ancient egyptian
 let casket;
-let mummy;
+var mummy;
 // roman statue
 let dayroman;
 var nightroman; // animation
@@ -65,6 +67,9 @@ function preload() {
     nightscream = loadAnimation('art/scream/scream1.png', 'art/scream/scream2.png', 'art/scream/scream3.png', 'art/scream/scream4.png', 'art/scream/scream5.png', 'art/scream/scream6.png', 'art/scream/scream7.png', 'art/scream/scream8.png', 'art/scream/scream9.png');
     nightroman = loadAnimation('art/roman/roman.png', 'art/roman/roman2.png', 'art/roman/roman3.png');
     mummy = loadAnimation('art/mummy/open1.png', 'art/mummy/open2.png', 'art/mummy/open3.png', 'art/mummy/open4.png', 'art/mummy/open5.png', 'art/mummy/open6.png', 'art/mummy/open7.png');
+    nightc = loadAnimation('art/terracotta/terracotta1.png', 'art/terracotta/terracotta2.png', 'art/terracotta/terracotta3.png', 'art/terracotta/terracotta4.png', 'art/terracotta/terracotta5.png', 'art/terracotta/terracotta6.png', 'art/terracotta/terracotta7.png');
+    // sounds
+    //nightsound = loadSound('nightsound.mp3');
 }
 
 function setup() {
@@ -74,20 +79,26 @@ function setup() {
         stars[i] = new Star(); // star class called in array
     }
 
-    // animations 
-    mummy.frameDelay = 10; // slow down speed of animation
-    sprite = createSprite(650, 300);
-    sprite.addAnimation("open", mummy);
-
-    // time
-
-    startTime = millis(); // start time
+    // animation sprites
+    warpmemory.frameDelay = 12; // slow down speed of animations
+    sprite1 = createSprite(600, 250); // Dali
+    sprite1.addAnimation("memory", warpmemory);
+    nightscream.frameDelay = 10;
+    sprite2 = createSprite(1020, 270);
+    sprite2.addAnimation("scream", nightscream);
+    mummy.frameDelay = 10;
+    sprite3 = createSprite(650, 300); // Mummy
+    sprite3.addAnimation("open", mummy);
+    nightc.frameDelay = 15;
+    sprite4 = createSprite(160, 280);
+    sprite4.addAnimation("terracotta", nightc);
 }
 
 function draw() {
 
     if (scene == 1) { // title screen
         if (day) {
+            //nightsound.stop();
             noStroke();
             // sky
             background("#ade8f4");
@@ -101,6 +112,8 @@ function draw() {
             daysign(1250, 500); // sign
 
         } else {
+            //nightsound.play();
+            //nightsound.loop();
             noStroke();
             // sky
             background("#0e0e52");
@@ -172,11 +185,11 @@ function draw() {
             rx = map(mouseX, 0, width, 143, 155); // right pupil - horizontal distance (x) : mouseX has range from 0 - width, map it between 143-155
 
             // Painting 2: The Persistence of Memory
-            animation(warpmemory, 600, 250);
+            drawSprite(sprite1);
             image(nighthorizontal, 600, 250); // frame
 
             // Painting 3: The Scream
-            animation(nightscream, 1020, 270);
+            drawSprite(sprite2);
             image(nightvertical, 1020, 270, 450, 600); // frame
 
             nightsign(1250, 500); // sign
@@ -192,7 +205,7 @@ function draw() {
 
             // Terracotta Warrior
             imageMode(CENTER);
-            image(terracotta, 200, 280, 170, 498);
+            image(terracotta, 160, 280, 344, 500);
 
             // Ancient Egyptian Casket
             image(casket, 600, 280, 400, 533);
@@ -215,9 +228,10 @@ function draw() {
 
             // Terracotta Warrior
             fill(255);
-            imageMode(CENTER);
-            image(terracotta, 200, 280, 170, 498);
-            fill(255, 237, 71, 50);
+            //imageMode(CENTER);
+            //image(terracotta, 200, 280, 170, 498);
+            //fill(255, 237, 71, 50);
+            drawSprite(sprite4);
 
             // Roman statue - Augustus of Prima Porta
             animation(nightroman, 1000, 300);
@@ -229,10 +243,8 @@ function draw() {
             rect(625, 600, 1400, 100);
 
             // Ancient Egyptian Casket - goes to front of screen, this is why its in front of floor
-            drawSprites(); // animation
+            drawSprite(sprite3); // animation
             fill(255, 237, 71, 50);
-
-
             nightsign(1250, 500); // sign
         }
     }
@@ -251,14 +263,14 @@ function draw() {
 
             daysign(1250, 500); // sign
         } else {
-
-
             noStroke();
             // wall
             background("#36453e");
 
+            conufsion1();
 
-            setTimeout(confusion1, 2000);
+
+
 
             // trex
             fill(0);
