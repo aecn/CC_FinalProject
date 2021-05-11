@@ -1,52 +1,55 @@
 // Annie Chen - Final Project
 
-
-var scene = 1; // scenes start with 1, the title screen
-let day = true; // the daytime is default until KeyPressed
-var sprite;
-// museum
-let daymuseum;
-let nightmuseum;
-// stars
+// GENERAL CONTROLS
+var setting = 1; // starts with setting 1: the museum exterior
+let day = true; // the daytime is default until any key is pressed
+// MUSEUM BUILDING
+let daymuseum; // image of museum in the day
+var color1, color2;
+let nightmuseum; // image of museum in the night
 var stars = []; // array storing stars
-let nightsound;
-// paintings
-// pearl
-let pearl;
-let nightpearl;
-let leye;
-let reye;
-let lx = 160;
-let rx = 240;
-let ly = 248;
-let ry = 248;
-// persistence of time
-let memory;
-var warpmemory; // animation
-// the scream
-let scream;
-var nightscream;
-// painting frames
-let vertical;
-let horizontal;
-let nightvertical;
-let nighthorizontal;
-// terracotta
-let terracotta;
-var nightc;
-// ancient egyptian
-let casket;
-var mummy;
-// roman statue
-let dayroman;
-var nightroman; // animation
+let nightsound; // night time noises
+// PAINTINGS
+// The Girl With the Pearl Earring
+let pearl; // image of painting in the day
+let nightpearl; // image of painting in the night
+let leye; // left eye
+let reye; // right eye
+let lx = 160; // left pupil horizontal location
+let rx = 240; // right pupil horizontal location
+let ly = 248; // left pupil vertical location
+let ry = 248; // right pupil vertical location
+// The Persistence of Memory
+let memory; // image of painting in the day
+var warpmemory; // animation of painting in the night
+// The Scream
+let scream; // image of painting in the day
+var nightscream; // animation of painting in the night
+// PAINTING FRAMES
+let vertical; // image of vertical frame in the day
+let horizontal; // image of horizontal frame in the day
+let nightvertical; // image of vertical frame in the night
+let nighthorizontal; // image of horizontal frame in the night
+// terracotta warrior statue
+let terracotta; // image of terracotta warrior in the day
+var nightc; // animation of the warrior in the night
+// ancient egyptian casket + surprise mummy
+let casket; // image of casket in the day
+var mummy; // animation of mummy coming out of the casket in the night
+// roman statue (Augustus of Prima Porta)
+let dayroman; // image of statue in the day
+var nightroman; // animation of statue in the night
 // dinosaurs
-let dino;
-let closeupdino;
+let dino; // image of dinosaur display in the day
+//var closeupdino; // animation of close up dino, in the night
+var currtime; // current time
+var prevtime; // previous time
+var interval; // time interval
+var scene; // diff. scenes of dino
 
 // asychronously loading of heavy images
 function preload() {
-    // images
+    // IMAGES
     daymuseum = loadImage('art/museum.png');
     nightmuseum = loadImage('art/nightmuseum.png');
     pearl = loadImage('art/pearl.png');
@@ -61,13 +64,14 @@ function preload() {
     casket = loadImage('art/casket.png');
     dayroman = loadImage('art/roman1.png');
     dino = loadImage('art/dino.png');
-    closeupdino = loadImage('art/closeupdino.png');
-    // animations
+    //closeupdino = loadImage('art/closeupdino.png');
+    // ANIMATIONS
     warpmemory = loadAnimation('art/memory/memory1.png', 'art/memory/memory2.png', 'art/memory/memory3.png', 'art/memory/memory4.png', 'art/memory/memory5.png', 'art/memory/memory6.png', 'art/memory/memory7.png');
     nightscream = loadAnimation('art/scream/scream1.png', 'art/scream/scream2.png', 'art/scream/scream3.png', 'art/scream/scream4.png', 'art/scream/scream5.png', 'art/scream/scream6.png', 'art/scream/scream7.png', 'art/scream/scream8.png', 'art/scream/scream9.png');
     nightroman = loadAnimation('art/roman/roman.png', 'art/roman/roman2.png', 'art/roman/roman3.png');
     mummy = loadAnimation('art/mummy/open1.png', 'art/mummy/open2.png', 'art/mummy/open3.png', 'art/mummy/open4.png', 'art/mummy/open5.png', 'art/mummy/open6.png', 'art/mummy/open7.png');
     nightc = loadAnimation('art/terracotta/terracotta1.png', 'art/terracotta/terracotta2.png', 'art/terracotta/terracotta3.png', 'art/terracotta/terracotta4.png', 'art/terracotta/terracotta5.png', 'art/terracotta/terracotta6.png', 'art/terracotta/terracotta7.png');
+    //closeupdino = loadAnimation('art/closeupdino.png', 'art/closeupdino2.png');
     // sounds
     //nightsound = loadSound('nightsound.mp3');
 }
@@ -78,7 +82,6 @@ function setup() {
     for (var i = 0; i < 500; i++) { // 500 stars stored in array
         stars[i] = new Star(); // star class called in array
     }
-
     // animation sprites
     warpmemory.frameDelay = 12; // slow down speed of animations
     sprite1 = createSprite(600, 250); // Dali
@@ -92,46 +95,25 @@ function setup() {
     nightc.frameDelay = 15;
     sprite4 = createSprite(160, 280);
     sprite4.addAnimation("terracotta", nightc);
+    // timed scenes
+    interval = 3000; // set time interval = 1 second
+    prevtime = 0; // prev time starts at 0
+    scene = 1; // scene starts at 1
+    // gradient
+    color1 = color("#ade8f4");
+    color2 = color("#def5fa");
 }
 
 function draw() {
-
-    if (scene == 1) { // title screen
+    if (setting == 1) { // title screen
         if (day) {
-            //nightsound.stop();
-            noStroke();
-            // sky
-            background("#ade8f4");
-            // grass
-            fill("#38b000");
-            rectMode(CENTER);
-            rect(625, 600, 1400, 100);
-            // building
-            imageMode(CENTER); // all images in sketch use center points
-            image(daymuseum, 650, 280, 1000, 750);
-            daysign(1250, 500); // sign
-
+            scene1day();
         } else {
-            //nightsound.play();
-            //nightsound.loop();
-            noStroke();
-            // sky
-            background("#0e0e52");
-            for (var i = 0; i < stars.length; i++) { // fetch whole array of stars
-                stars[i].display(); // array of stars is displayed
-            }
-            // grass
-            fill("#0d2818");
-            rectMode(CENTER);
-            rect(625, 600, 1400, 100);
-            // building
-            imageMode(CENTER);
-            image(nightmuseum, 650, 280, 1000, 750);
-            nightsign(1250, 500); // sign
+            scene1night();
         }
     }
 
-    if (scene == 2) { // paintings display
+    if (setting == 2) { // paintings display
         if (day) {
             noStroke();
             // wall
@@ -196,7 +178,7 @@ function draw() {
         }
     }
 
-    if (scene == 3) { // statues/mummies display
+    if (setting == 3) { // statues/mummies display
         if (day) {
             noStroke();
             // wall
@@ -249,7 +231,7 @@ function draw() {
         }
     }
 
-    if (scene == 4) { // dinosaur fossils display
+    if (setting == 4) { // dinosaur fossils display
         if (day) {
             noStroke();
             // wall
@@ -263,28 +245,112 @@ function draw() {
 
             daysign(1250, 500); // sign
         } else {
-            noStroke();
-            // wall
-            background("#36453e");
 
-            conufsion1();
+            // inspired by in class code: timeControl_example_LadyK
 
+            currtime = millis(); // checking the time
+            if ((currtime - prevtime > interval / 2) && (scene == 1)) { // short interval - divided by 2. 1.5 sec.
+                prevtime = currtime; // update previous time with what was stored in current time
+                scene++; // proceed to next scene
+            } else if ((currtime - prevtime > (interval / 2)) && (scene == 2)) { // short interval - divided by 2. 1.5 sec.
+                prevtime = currtime; // update previous time with what was stored in current time
+                scene++; // proceed to next scene
+            } else if ((currtime - prevtime > (interval / 2)) && (scene == 3)) { // short interval - divided by 2. 1.5 sec.
+                prevtime = currtime; // update previous time with what was stored in current time
+                scene++; // proceed to next scene
+            } else if ((currtime - prevtime > (interval)) && (scene == 4)) {
+                prevtime = currtime; // update previous time with what was stored in current time
+                scene++; // proceed to next scene
+            } else if ((currtime - prevtime > (interval)) && (scene == 5)) {
+                prevtime = currtime; // update previous time with what was stored in current time
+                scene++; // proceed to next scene
+            } else if ((currtime - prevtime > (interval)) && (scene == 6)) {
+                prevtime = currtime; // update previous time with what was stored in current time
+                scene++; // proceed to next scene
+            } else if ((currtime - prevtime > (interval)) && (scene == 7)) {
+                prevtime = currtime; // update previous time with what was stored in current time
+                scene++; // proceed to next scene
+            }
 
+            if (scene == 1) {
+                // wall
+                background("#36453e");
+                fill(0);
+                rect(1200, 550, 100, 100); // sign stand
+                nightsign(1250, 500); // sign
+            }
+            if (scene == 2) { // scene 1 - buildup. confusion. question mark #1
+                noStroke();
+                // wall
+                background("#36453e");
+                fill(255);
+                textSize(50);
+                textFont('serif');
+                text('?', 650, 300); // question mark
+                fill("#000000");
+                rect(1200, 550, 100, 100); // sign stand
+                nightsign(1250, 500); // sign
+            }
 
+            if (scene == 3) { // scene 1 - buildup. confusion. question mark #2
+                noStroke();
+                // wall
+                background("#36453e");
+                fill(255);
+                textSize(50);
+                textFont('serif');
+                text('?', 650, 300); // question mark
+                text('??', 200, 200);
+                fill("#000000");
+                rect(1200, 550, 100, 100); // sign stand
+                nightsign(1250, 500); // sign
+            }
 
-            // trex
-            fill(0);
-            imageMode(CENTER);
-            image(closeupdino, 600, 380);
+            if (scene == 4) { // scene 1 - buildup. confusion. question mark #3
+                noStroke();
+                // wall
+                background("#36453e");
+                fill(255);
+                textSize(50);
+                textFont('serif');
+                text('?', 650, 300);
+                text('??', 200, 200);
+                text('???', 1000, 250); // question mark
+                fill("#000000");
+                rect(1200, 550, 100, 100); // sign stand
+                nightsign(1250, 500); // sign
+            }
 
+            if (scene == 5) {
+                noStroke();
+                // wall
+                background("#36453e");
+                // trex
+                // fill(0);
+                //imageMode(CENTER);
+                //image(closeupdino, 600, 380);
+                fill(0);
+                rect(1200, 550, 100, 100); // sign stand
+                nightsign(1250, 500); // sign
 
-            fill(0);
-            ellipseMode(CENTER);
-            ellipse(1000, 600, 10, 10);
+            }
 
-            fill("#000000");
-            rect(1200, 550, 100, 100); // sign stand
-            nightsign(1250, 500); // sign
+            if (scene == 6) {
+                background("#0F1412");
+                fill(0);
+                rect(1200, 550, 100, 100); // sign stand
+                nightsign(1250, 500); // sign
+            }
+
+            if (scene == 7) {
+                background("#000000");
+                fill(0);
+                rect(1200, 550, 100, 100); // sign stand
+                nightsign(1250, 500); // sign
+            }
+
+            if (scene > 7) scene = 1; // scenes only run once to prevent confusion
+
 
         }
     }
@@ -377,20 +443,55 @@ function nstand() {
     rect(1000, 540, 250, 30); // stand	
 }
 
-function confusion1() {
-    fill(255);
-    textSize(50);
-    text("?", 550, 300);
+function scene1day() {
+    noStroke();
+    // sky
+    //background("#ade8f4");
+    skygradient(color1, color2);
+    // grass
+    fill("#38b000");
+    rectMode(CENTER);
+    rect(625, 600, 1400, 100);
+    // building
+    imageMode(CENTER); // all images in sketch use center points
+    image(daymuseum, 650, 280, 1000, 750);
+    daysign(1250, 500); // sign
+}
 
+function skygradient(color1, color2) {
+    noFill();
+    for (var y = 0; y < 600; y++) { // start at the top of sktech, ends at the bottom. add color
+        var inter = map(y, 0, height, 0, 1);  
+        var c = lerpColor(color1, color2, inter); // blends colors
+        stroke(c);
+        line(0, y, width, y);
+    }
+}
+
+function scene1night() {
+    noStroke();
+    // sky
+    background("#0e0e52");
+    for (var i = 0; i < stars.length; i++) { // fetch whole array of stars
+        stars[i].display(); // array of stars is displayed
+    }
+    // grass
+    fill("#0d2818");
+    rectMode(CENTER);
+    rect(625, 600, 1400, 100);
+    // building
+    imageMode(CENTER);
+    image(nightmuseum, 650, 280, 1000, 750);
+    nightsign(1250, 500); // sign
 }
 
 
 
-function mousePressed() { // controls the scene switch
+function mousePressed() { // controls the setting switch
     if (mouseX > 1220 && mouseX < 1280 && mouseY > 370 && mouseY < 430) { // only if you click the button
-        scene = scene + 1;
-        if (scene > 4) {
-            scene = 1;
+        setting = setting + 1;
+        if (setting > 4) {
+            setting = 1;
         }
     }
 }
